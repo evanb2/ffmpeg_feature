@@ -17,7 +17,7 @@
             ->setAudioChannels(2)
             ->setAudioKiloBitrate(256);
 
-        $audio->save($format, 'Test_track3.wav');
+        $audio->save($format, 'output/Test_track3.wav');
 
     }
 
