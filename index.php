@@ -14,6 +14,7 @@
             <input type="file" name="audio_file" id="audio_file">
 
         </div>
+        <button type="submit" name="button">Submit</button>
     </form>
 </body>
 </html>
