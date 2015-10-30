@@ -2,19 +2,26 @@
     date_default_timezone_set('America/Los_Angeles');
     require __DIR__ . '/vendor/autoload.php';
 
-    $ffmpeg = FFMpeg\FFMpeg::create();
+    $audio_file = $_POST["audio_file"];
 
-    $audio = $ffmpeg->open('Test.mp3');
-    $format = new FFMpeg\Format\Audio\Flac();
-    $format->on('progress', function ($audio, $format, $percentage) {
-        echo "$percentage % transcoded";
-    });
+    function convertAudioFile($input) {
+        $ffmpeg = FFMpeg\FFMpeg::create();
 
-    $format
-        ->setAudioChannels(2)
-        ->setAudioKiloBitrate(256);
+        $audio = $ffmpeg->open($input);
+        $format = new FFMpeg\Format\Audio\Wav();
+        $format->on('progress', function ($audio, $format, $percentage) {
+            echo "$percentage % transcoded";
+        });
 
-    $audio->save($format, 'Test_track3.flac');
+        $format
+            ->setAudioChannels(2)
+            ->setAudioKiloBitrate(256);
+
+        $audio->save($format, 'Test_track3.wav');
+
+    }
+
+    convertAudioFile($audio_file);
 ?>
 
 <!DOCTYPE html>
