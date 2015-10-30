@@ -29,15 +29,18 @@
             ->setAudioCodec('pcm_s24le')
             ->setAudioKiloBitrate(96000);
 
-        $audio->save($format, 'output/Test_track8.wav');
-
+        $audio->save($format, 'output/Output_file.wav');
     }
 
-    $probe_outputs_original = probeAudioFile($audio_file);
+    $probe_input = probeAudioFile($audio_file);
 
-    $converted_file = convertAudioFile($audio_file);
+    if ($probe_input[0] == "wav" && $probe_input[1] == 2 && $probe_input[2] == 24) {
+        print_r("Nothing to do here.");
+    } else {
+        convertAudioFile($audio_file);
+    }
 
-    // $probe_outputs_converted = probeAudioFile("output/Test_track8.wav");
+    $probe_output = probeAudioFile("output/Output_file.wav");
 ?>
 
 <!DOCTYPE html>
@@ -49,12 +52,15 @@
     <body>
         <h4>Input File Info</h4>
         <hr>
-        <ul><?php foreach ($probe_outputs_original as $property) {
-                echo "<li>$property</li>";
+        <ul><?php foreach ($probe_input as $input_property) {
+                echo "<li>$input_property</li>";
             } ?>
         </ul>
         <hr>
-
+        <ul><?php foreach ($probe_output as $output_property) {
+                echo "<li>$output_property</li>";
+            } ?>
+        </ul>
         <hr>
         <h4>Format:</h4>
         <p><?php print_r(FFMpeg\FFProbe::create()->format($audio_file)); ?></p>
