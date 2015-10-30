@@ -9,9 +9,9 @@
         $output = array();
         $format = $ffprobe->format($input)->get('format_name');
         $channels = $ffprobe->streams($input)->audios()->first()->get('channels');
-        $codec_name = $ffprobe->streams($input)->audios()->first()->get('bits_per_sample');
+        $bits = $ffprobe->streams($input)->audios()->first()->get('bits_per_sample');
         $sample_rate = $ffprobe->streams($input)->audios()->first()->get('sample_rate');
-        array_push($output, $format, $channels, $codec_name, $sample_rate);
+        array_push($output, $format, $channels, $bits, $sample_rate);
         return $output;
     }
 
@@ -26,15 +26,18 @@
 
         $format
             ->setAudioChannels(2)
-            ->setAudioKiloBitrate(256);
+            ->setAudioCodec('pcm_s24le')
+            ->setAudioKiloBitrate(96000);
 
-        $audio->save($format, 'output/Test_track4.wav');
+        $audio->save($format, 'output/Test_track8.wav');
 
     }
 
-    $probe = probeAudioFile($audio_file);
+    $probe_outputs_original = probeAudioFile($audio_file);
 
-    convertAudioFile($audio_file);
+    $converted_file = convertAudioFile($audio_file);
+
+    // $probe_outputs_converted = probeAudioFile("output/Test_track8.wav");
 ?>
 
 <!DOCTYPE html>
@@ -44,12 +47,14 @@
         <title>Result</title>
     </head>
     <body>
-        <h4>Success</h4>
+        <h4>Input File Info</h4>
         <hr>
-        <ul><?php foreach ($probe as $property) {
+        <ul><?php foreach ($probe_outputs_original as $property) {
                 echo "<li>$property</li>";
             } ?>
         </ul>
+        <hr>
+
         <hr>
         <h4>Format:</h4>
         <p><?php print_r(FFMpeg\FFProbe::create()->format($audio_file)); ?></p>

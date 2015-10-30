@@ -26,6 +26,6 @@ class Wav extends DefaultAudio
      */
     public function getAvailableAudioCodecs()
     {
-        return array('pcm_s16le');
+        return array('pcm_s16le', 'pcm_s24le');
     }
 }
