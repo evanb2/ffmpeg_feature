@@ -4,6 +4,15 @@
 
     $audio_file = $_POST["audio_file"];
 
+    function probeAudioFile($input) {
+        $ffprobe = FFMpeg\FFProbe::create();
+        $output = array();
+        $channels = $ffprobe->streams($input)->audios()->first()->get('channels');
+        $codec_name = $ffprobe->streams($input)->audios()->first()->get('codec_name');
+        array_push($output, $channels, $codec_name);
+        return $output;
+    }
+
     function convertAudioFile($input) {
         $ffmpeg = FFMpeg\FFMpeg::create();
 
@@ -17,9 +26,11 @@
             ->setAudioChannels(2)
             ->setAudioKiloBitrate(256);
 
-        $audio->save($format, 'output/Test_track3.wav');
+        $audio->save($format, 'output/Test_track4.wav');
 
     }
+
+    $probe = probeAudioFile($audio_file);
 
     convertAudioFile($audio_file);
 ?>
@@ -32,5 +43,8 @@
     </head>
     <body>
         <h4>Success</h4>
+        <ul><?php foreach ($probe as $property) {
+            echo "<li>$property</li>";
+        } ?></ul>
     </body>
 </html>
