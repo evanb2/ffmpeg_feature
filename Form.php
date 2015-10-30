@@ -7,9 +7,11 @@
     function probeAudioFile($input) {
         $ffprobe = FFMpeg\FFProbe::create();
         $output = array();
+        $format = $ffprobe->format($input)->get('format_name');
         $channels = $ffprobe->streams($input)->audios()->first()->get('channels');
-        $codec_name = $ffprobe->streams($input)->audios()->first()->get('codec_name');
-        array_push($output, $channels, $codec_name);
+        $codec_name = $ffprobe->streams($input)->audios()->first()->get('bits_per_sample');
+        $sample_rate = $ffprobe->streams($input)->audios()->first()->get('sample_rate');
+        array_push($output, $format, $channels, $codec_name, $sample_rate);
         return $output;
     }
 
@@ -43,8 +45,17 @@
     </head>
     <body>
         <h4>Success</h4>
+        <hr>
         <ul><?php foreach ($probe as $property) {
-            echo "<li>$property</li>";
-        } ?></ul>
+                echo "<li>$property</li>";
+            } ?>
+        </ul>
+        <hr>
+        <h4>Format:</h4>
+        <p><?php print_r(FFMpeg\FFProbe::create()->format($audio_file)); ?></p>
+        <hr>
+        <h4>Streams:</h4>
+        <p><?php print_r(FFMpeg\FFProbe::create()->streams($audio_file)); ?></p>
+
     </body>
 </html>
