@@ -5,6 +5,7 @@
     $audio_file = $_POST["audio_file"];
 
     function probeAudioFile($input) {
+        // $input = "input/" . $input_file;
         $ffprobe = FFMpeg\FFProbe::create();
         $output = array();
         $format = $ffprobe->format($input)->get('format_name');
@@ -24,17 +25,15 @@
             echo "$percentage % transcoded";
         });
 
-        $format
-            ->setAudioChannels(2)
-            ->setAudioCodec('pcm_s24le')
-            ->setAudioKiloBitrate(96000);
+        $format->setAudioChannels(2);
+        $audio->filters()->resample(96000);
 
         $audio->save($format, 'output/Output_file.wav');
     }
 
     $probe_input = probeAudioFile($audio_file);
 
-    if ($probe_input[0] == "wav" && $probe_input[1] == 2 && $probe_input[2] == 24) {
+    if ($probe_input[0] == "wav" && $probe_input[1] == 2 && $probe_input[2] == 24 && $probe_input[3] == 96000) {
         print_r("Nothing to do here.");
     } else {
         convertAudioFile($audio_file);
@@ -57,6 +56,7 @@
             } ?>
         </ul>
         <hr>
+        <h4>Output File Info</h4>
         <ul><?php foreach ($probe_output as $output_property) {
                 echo "<li>$output_property</li>";
             } ?>

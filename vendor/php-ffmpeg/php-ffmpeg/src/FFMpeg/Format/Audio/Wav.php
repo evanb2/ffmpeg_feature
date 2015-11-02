@@ -18,7 +18,7 @@ class Wav extends DefaultAudio
 {
     public function __construct()
     {
-        $this->audioCodec = 'pcm_s16le';
+        $this->audioCodec = 'pcm_s24le';
     }
 
     /**
@@ -26,6 +26,6 @@ class Wav extends DefaultAudio
      */
     public function getAvailableAudioCodecs()
     {
-        return array('pcm_s16le', 'pcm_s24le');
+        return array('pcm_s24le');
     }
 }
