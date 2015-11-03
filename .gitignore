@@ -1,8 +1,4 @@
 /vendor
 /output
+/input
 composer.lock
-Test_track8.wav
-stereo-16-96.wav
-stereo-24-44.1.wav
-stereo-24-96.wav
-mono-16-44.1.wav

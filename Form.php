@@ -1,11 +1,9 @@
 <?php
     date_default_timezone_set('America/Los_Angeles');
     require __DIR__ . '/vendor/autoload.php';
-
-    $audio_file = $_POST["audio_file"];
-
+    // include 'ConverterClass.php';
     function probeAudioFile($input) {
-        // $input = "input/" . $input_file;
+        // print_r($input);
         $ffprobe = FFMpeg\FFProbe::create();
         $output = array();
         $format = $ffprobe->format($input)->get('format_name');
@@ -31,6 +29,9 @@
         $audio->save($format, 'output/Output_file.wav');
     }
 
+    $audio_file = $_POST["audio_file"];
+    // print_r($audio_file);
+
     $probe_input = probeAudioFile($audio_file);
 
     if ($probe_input[0] == "wav" && $probe_input[1] == 2 && $probe_input[2] == 24 && $probe_input[3] == 96000) {
@@ -51,15 +52,19 @@
     <body>
         <h4>Input File Info</h4>
         <hr>
-        <ul><?php foreach ($probe_input as $input_property) {
-                echo "<li>$input_property</li>";
-            } ?>
+        <ul>
+            <li>Format: <?php echo $probe_input[0] ?></li>
+            <li>Channels: <?php echo $probe_input[1] ?></li>
+            <li>Bits: <?php echo $probe_input[2] ?></li>
+            <li>Sample Rate: <?php echo $probe_input[3] ?></li>
         </ul>
         <hr>
         <h4>Output File Info</h4>
-        <ul><?php foreach ($probe_output as $output_property) {
-                echo "<li>$output_property</li>";
-            } ?>
+        <ul>
+            <li>Format: <?php echo $probe_output[0] ?></li>
+            <li>Channels: <?php echo $probe_output[1] ?></li>
+            <li>Bits: <?php echo $probe_output[2] ?></li>
+            <li>Sample Rate: <?php echo $probe_output[3] ?></li>
         </ul>
         <hr>
         <h4>Format:</h4>
