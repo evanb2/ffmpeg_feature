@@ -3,44 +3,42 @@
     require __DIR__ . '/vendor/autoload.php';
     // include 'ConverterClass.php';
     function probeAudioFile($input) {
-        // print_r($input);
+        $file_path = dirname(__FILE__) . "/audio_files/" . $input;
+        // print_r($file_path);
         $ffprobe = FFMpeg\FFProbe::create();
         $output = array();
-        $format = $ffprobe->format($input)->get('format_name');
-        $channels = $ffprobe->streams($input)->audios()->first()->get('channels');
-        $bits = $ffprobe->streams($input)->audios()->first()->get('bits_per_sample');
-        $sample_rate = $ffprobe->streams($input)->audios()->first()->get('sample_rate');
+        $format = $ffprobe->format($file_path)->get('format_name');
+        $channels = $ffprobe->streams($file_path)->audios()->first()->get('channels');
+        $bits = $ffprobe->streams($file_path)->audios()->first()->get('bits_per_sample');
+        $sample_rate = $ffprobe->streams($file_path)->audios()->first()->get('sample_rate');
         array_push($output, $format, $channels, $bits, $sample_rate);
         return $output;
     }
 
     function convertAudioFile($input) {
+        $file_path = dirname(__FILE__) . "/audio_files/" . $input;
         $ffmpeg = FFMpeg\FFMpeg::create();
-
-        $audio = $ffmpeg->open($input);
+        $audio = $ffmpeg->open($file_path);
         $format = new FFMpeg\Format\Audio\Wav();
         $format->on('progress', function ($audio, $format, $percentage) {
             echo "$percentage % transcoded";
         });
-
         $format->setAudioChannels(2);
         $audio->filters()->resample(96000);
-
-        $audio->save($format, 'output/Output_file.wav');
+        $audio->save($format, 'Output_file2.wav');
     }
 
     $audio_file = $_POST["audio_file"];
-    // print_r($audio_file);
 
     $probe_input = probeAudioFile($audio_file);
 
     if ($probe_input[0] == "wav" && $probe_input[1] == 2 && $probe_input[2] == 24 && $probe_input[3] == 96000) {
         print_r("Nothing to do here.");
     } else {
-        convertAudioFile($audio_file);
+        $converted_file = convertAudioFile($audio_file);
+        // print_r($converted_file);
     }
-
-    $probe_output = probeAudioFile("output/Output_file.wav");
+        $probe_output = probeAudioFile($converted_file);
 ?>
 
 <!DOCTYPE html>

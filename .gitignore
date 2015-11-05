@@ -1,4 +1,3 @@
 /vendor
-/output
-/input
+/audio_files
 composer.lock
